@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,62 +7,151 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-  :root {
-    --bg: #0b1020;
+  /* ============ THEME TOKENS ============ */
+  :root,
+  [data-theme="dark"] {
+    --bg-1: #1a2444;
+    --bg-2: #0b1020;
     --surface: #151b2e;
     --surface-2: #1c2338;
+    --surface-3: #232b42;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.14);
     --accent: #ff4d6d;
     --accent-2: #c9184a;
+    --accent-soft: rgba(255,77,109,0.15);
+    --accent-text: #ffb3c1;
+
     --selected: #22c55e;
-    --occupied: #2a3145;
+    --selected-glow: rgba(34,197,94,0.55);
+
+    /* SEAT COLORS — DARK MODE */
+    --seat-available-bg: #2e3852;
+    --seat-available-border: #4a5678;
+    --seat-available-text: #cfd8f0;
+    --seat-available-hover: #3a466a;
+
+    --seat-occupied-bg: #0d1220;
+    --seat-occupied-border: #1e2740;
+    --seat-occupied-text: #3a4462;
+
     --text: #f1f5ff;
+    --text-strong: #ffffff;
     --muted: #8b97b8;
-    --transition: 0.25s cubic-bezier(0.2, 0, 0, 1);
+    --muted-2: #6a7594;
+
+    --shadow-lg: 0 30px 60px -20px rgba(0,0,0,0.8);
+    --shadow-card: 0 18px 34px -14px rgba(0,0,0,0.9);
+    --overlay-bg: rgba(5, 8, 18, 0.9);
+    --modal-bg: #151b2e;
+    --toast-success-bg: linear-gradient(135deg, #22c55e, #16a34a);
+    --toast-success-text: #06210f;
+    --toast-info-bg: linear-gradient(135deg, #ff4d6d, #c9184a);
+    --toast-info-text: #ffffff;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+  [data-theme="light"] {
+    --bg-1: #eef2fb;
+    --bg-2: #dbe4f5;
+    --surface: #ffffff;
+    --surface-2: #f4f7fd;
+    --surface-3: #e8eef9;
+    --border: rgba(15,23,42,0.08);
+    --border-strong: rgba(15,23,42,0.15);
+    --accent: #e11d48;
+    --accent-2: #be123c;
+    --accent-soft: rgba(225,29,72,0.12);
+    --accent-text: #be123c;
+
+    --selected: #16a34a;
+    --selected-glow: rgba(22,163,74,0.45);
+
+    /* SEAT COLORS — LIGHT MODE (high visibility) */
+    --seat-available-bg: #ffffff;
+    --seat-available-border: #94a3b8;
+    --seat-available-text: #1e293b;
+    --seat-available-hover: #e0f2fe;
+
+    --seat-occupied-bg: #cbd5e1;
+    --seat-occupied-border: #94a3b8;
+    --seat-occupied-text: #475569;
+
+    --text: #0f172a;
+    --text-strong: #020617;
+    --muted: #64748b;
+    --muted-2: #94a3b8;
+
+    --shadow-lg: 0 30px 60px -20px rgba(15,23,42,0.25);
+    --shadow-card: 0 18px 34px -14px rgba(15,23,42,0.2);
+    --overlay-bg: rgba(15, 23, 42, 0.6);
+    --modal-bg: #ffffff;
+    --toast-success-bg: linear-gradient(135deg, #22c55e, #15803d);
+    --toast-success-text: #ffffff;
+    --toast-info-bg: linear-gradient(135deg, #e11d48, #be123c);
+    --toast-info-text: #ffffff;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  html, body { transition: background 0.4s ease, color 0.3s ease; }
 
   body {
-    background: radial-gradient(circle at 20% 0%, #1a2444 0%, #0b1020 60%);
+    background: radial-gradient(circle at 20% 0%, var(--bg-1) 0%, var(--bg-2) 60%);
     color: var(--text);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    transition: background 0.5s ease;
   }
 
+  /* ============ APP SHELL ============ */
   .app {
     width: 100%;
     max-width: 1120px;
-    background: rgba(21, 27, 46, 0.85);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 28px;
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     display: grid;
     grid-template-columns: 1fr;
-    transition: var(--transition);
+    transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
   }
 
   @media (min-width: 900px) {
     .app { grid-template-columns: 360px 1fr; }
   }
 
-  /* ---------- SIDEBAR ---------- */
+  /* ============ SIDEBAR ============ */
   .sidebar {
     padding: 26px 22px;
-    background: rgba(0,0,0,0.28);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     gap: 20px;
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   @media (min-width: 900px) {
-    .sidebar { border-right: 1px solid rgba(255,255,255,0.05); border-bottom: none; }
+    .sidebar {
+      border-right: 1px solid var(--border);
+      border-bottom: none;
+    }
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   .brand {
@@ -72,6 +161,7 @@
     font-size: 1.4rem;
     font-weight: 800;
     letter-spacing: -0.5px;
+    color: var(--text-strong);
   }
 
   .brand i {
@@ -86,16 +176,50 @@
 
   .brand span { color: var(--accent); }
 
-  /* Featured movie poster */
+  /* Theme toggle */
+  .theme-toggle {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: grid; place-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: rotate(15deg) scale(1.05);
+  }
+
+  .theme-toggle i {
+    position: absolute;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  }
+
+  [data-theme="dark"] .theme-toggle .icon-sun { transform: translateY(0); opacity: 1; }
+  [data-theme="dark"] .theme-toggle .icon-moon { transform: translateY(30px); opacity: 0; }
+  [data-theme="light"] .theme-toggle .icon-sun { transform: translateY(-30px); opacity: 0; }
+  [data-theme="light"] .theme-toggle .icon-moon { transform: translateY(0); opacity: 1; }
+
+  /* ============ FEATURED POSTER ============ */
   .featured {
     position: relative;
     border-radius: 18px;
     overflow: hidden;
     aspect-ratio: 16 / 10;
-    background: var(--surface-2);
-    box-shadow: 0 18px 34px -14px rgba(0,0,0,0.9);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--surface-3);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
     cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .featured img {
@@ -107,6 +231,7 @@
   }
 
   .featured:hover img { transform: scale(1.08); }
+  .featured:hover { border-color: var(--accent); }
 
   .featured::after {
     content: '';
@@ -116,10 +241,15 @@
     pointer-events: none;
   }
 
+  [data-theme="light"] .featured::after {
+    background: linear-gradient(to top, rgba(15,23,42,0.95) 8%, rgba(15,23,42,0.3) 55%, transparent 100%);
+  }
+
   .featured-info {
     position: absolute;
     left: 16px; right: 16px; bottom: 12px;
     z-index: 2;
+    color: #ffffff;
   }
 
   .featured-info h3 {
@@ -127,46 +257,47 @@
     font-weight: 700;
     letter-spacing: -0.2px;
     margin-bottom: 3px;
+    color: #ffffff;
   }
 
   .featured-info p {
     font-size: 0.75rem;
-    color: var(--muted);
+    color: rgba(255,255,255,0.75);
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
   .featured-info .pill {
-    background: rgba(255,77,109,0.2);
+    background: rgba(255,77,109,0.35);
     color: #ffb3c1;
     padding: 2px 8px;
     border-radius: 999px;
     font-weight: 600;
     font-size: 0.68rem;
     letter-spacing: 0.4px;
+    backdrop-filter: blur(4px);
   }
 
-  /* Play overlay on featured */
   .play-badge {
     position: absolute;
     top: 12px; right: 12px;
     z-index: 3;
     width: 40px; height: 40px;
     border-radius: 50%;
-    background: rgba(255,77,109,0.95);
+    background: var(--accent);
     color: white;
     display: grid; place-items: center;
     font-size: 0.95rem;
     box-shadow: 0 10px 24px -6px var(--accent-2), 0 0 0 4px rgba(255,77,109,0.15);
-    transition: var(--transition);
+    transition: all 0.3s ease;
     pointer-events: none;
     animation: pulseRing 2.4s infinite;
   }
 
   .featured:hover .play-badge {
     transform: scale(1.12);
-    background: var(--accent);
+    background: var(--accent-2);
   }
 
   @keyframes pulseRing {
@@ -175,7 +306,7 @@
     100% { box-shadow: 0 10px 24px -6px var(--accent-2), 0 0 0 0 rgba(255,77,109,0); }
   }
 
-  /* Field */
+  /* ============ FIELDS ============ */
   .field { display: flex; flex-direction: column; gap: 8px; }
 
   .field label {
@@ -194,11 +325,11 @@
     padding: 4px 2px 10px;
     scroll-snap-type: x mandatory;
     scrollbar-width: thin;
-    scrollbar-color: var(--accent) var(--surface-2);
+    scrollbar-color: var(--accent) var(--surface-3);
   }
 
   .movie-scroll::-webkit-scrollbar { height: 4px; }
-  .movie-scroll::-webkit-scrollbar-track { background: var(--surface-2); border-radius: 10px; }
+  .movie-scroll::-webkit-scrollbar-track { background: var(--surface-3); border-radius: 10px; }
   .movie-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
   .movie-card {
@@ -206,7 +337,7 @@
     width: 92px;
     cursor: pointer;
     scroll-snap-align: start;
-    transition: transform var(--transition);
+    transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
     border: none;
     background: transparent;
     padding: 0;
@@ -221,10 +352,10 @@
     aspect-ratio: 2 / 3;
     border-radius: 12px;
     overflow: hidden;
-    background: var(--surface-2);
+    background: var(--surface-3);
     border: 2px solid transparent;
-    box-shadow: 0 8px 18px -8px rgba(0,0,0,0.9);
-    transition: var(--transition);
+    box-shadow: 0 8px 18px -8px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
     position: relative;
   }
 
@@ -237,7 +368,7 @@
 
   .movie-card.active .movie-poster {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(255,77,109,0.25), 0 12px 24px -8px var(--accent-2);
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 12px 24px -8px var(--accent-2);
   }
 
   .movie-card.active .movie-poster::after {
@@ -264,12 +395,30 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: color var(--transition);
+    transition: color 0.25s ease;
   }
 
-  .movie-card.active .movie-name { color: var(--text); }
+  .movie-card.active .movie-name { color: var(--text-strong); }
 
-  /* Sidebar trailer button */
+  /* Showtime select */
+  .select-input {
+    appearance: none;
+    background: var(--surface-3);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.25s ease;
+    font-family: inherit;
+  }
+
+  .select-input:hover,
+  .select-input:focus { border-color: var(--accent); }
+
+  /* Trailer button */
   .btn-trailer {
     display: flex;
     align-items: center;
@@ -277,35 +426,35 @@
     gap: 10px;
     padding: 12px;
     border-radius: 12px;
-    background: rgba(255,77,109,0.1);
-    border: 1px solid rgba(255,77,109,0.35);
-    color: #ffb3c1;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.25s ease;
     font-family: inherit;
   }
 
   .btn-trailer:hover {
-    background: rgba(255,77,109,0.2);
+    background: var(--accent);
     color: white;
     border-color: var(--accent);
     transform: translateY(-1px);
+    box-shadow: 0 10px 20px -8px var(--accent-2);
   }
 
-  .btn-trailer i { font-size: 0.95rem; }
-
-  /* Summary */
+  /* ============ SUMMARY ============ */
   .summary {
     margin-top: auto;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--surface-3);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 16px 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   .summary-row {
@@ -317,7 +466,7 @@
   }
 
   .summary-row strong {
-    color: var(--text);
+    color: var(--text-strong);
     font-weight: 600;
     text-align: right;
     max-width: 62%;
@@ -328,9 +477,9 @@
 
   .summary-row.total {
     padding-top: 12px;
-    border-top: 1px dashed rgba(255,255,255,0.1);
+    border-top: 1px dashed var(--border-strong);
     font-size: 1rem;
-    color: var(--text);
+    color: var(--text-strong);
   }
 
   .summary-row.total strong {
@@ -347,7 +496,7 @@
     font-weight: 700;
     font-size: 0.98rem;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.25s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -359,13 +508,13 @@
   .btn-book:hover:not(:disabled) { transform: translateY(-2px); }
   .btn-book:active:not(:disabled) { transform: scale(0.98); }
   .btn-book:disabled {
-    background: var(--surface-2);
-    color: var(--muted);
+    background: var(--surface-3);
+    color: var(--muted-2);
     cursor: not-allowed;
     box-shadow: none;
   }
 
-  /* ---------- SEAT AREA ---------- */
+  /* ============ SEAT AREA ============ */
   .seat-area {
     padding: 32px 24px;
     display: flex;
@@ -373,6 +522,8 @@
     align-items: center;
     justify-content: center;
     gap: 24px;
+    background: var(--surface);
+    transition: background 0.4s ease;
   }
 
   .screen-wrap {
@@ -382,11 +533,17 @@
   }
 
   .screen {
-    height: 10px;
-    background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.05));
+    height: 12px;
+    background: linear-gradient(to bottom, var(--text-strong), rgba(0,0,0,0));
     border-radius: 6px;
     transform: rotateX(-35deg);
-    box-shadow: 0 18px 34px -6px rgba(255,77,109,0.45);
+    box-shadow: 0 18px 34px -6px var(--accent);
+    opacity: 0.9;
+  }
+
+  [data-theme="light"] .screen {
+    background: linear-gradient(to bottom, #1e293b, rgba(30,41,59,0));
+    box-shadow: 0 18px 34px -6px rgba(30,41,59,0.35);
   }
 
   .screen-label {
@@ -395,9 +552,10 @@
     font-size: 0.7rem;
     letter-spacing: 5px;
     color: var(--muted);
-    font-weight: 600;
+    font-weight: 700;
   }
 
+  /* ============ SEATS (HIGH VISIBILITY) ============ */
   .seats {
     display: flex;
     flex-direction: column;
@@ -422,48 +580,88 @@
   .seat {
     width: 26px;
     height: 24px;
-    background: var(--surface-2);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--seat-available-bg);
+    border: 1.5px solid var(--seat-available-border);
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
   }
 
+  /* Available seats — bright & inviting */
   .seat:not(.occupied):hover {
-    transform: translateY(-3px) scale(1.1);
+    transform: translateY(-3px) scale(1.12);
+    background: var(--seat-available-hover);
     border-color: var(--accent);
-    box-shadow: 0 6px 14px -4px var(--accent);
+    box-shadow: 0 8px 16px -4px var(--accent);
+    z-index: 2;
   }
 
+  /* Selected — vibrant green with glow */
   .seat.selected {
     background: var(--selected);
     border-color: var(--selected);
-    box-shadow: 0 0 14px rgba(34,197,94,0.6);
+    box-shadow: 0 0 0 2px var(--selected-glow), 0 0 16px var(--selected-glow);
     animation: pop 0.28s ease;
+    z-index: 1;
+  }
+
+  .seat.selected::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.35);
+    pointer-events: none;
   }
 
   @keyframes pop {
-    0% { transform: scale(0.85); }
-    60% { transform: scale(1.12); }
+    0% { transform: scale(0.8); }
+    60% { transform: scale(1.18); }
     100% { transform: scale(1); }
   }
 
+  /* Occupied — muted, dashed border, strikethrough feel */
   .seat.occupied {
-    background: var(--occupied);
-    border-color: transparent;
-    opacity: 0.45;
+    background: var(--seat-occupied-bg);
+    border: 1.5px dashed var(--seat-occupied-border);
+    opacity: 0.7;
     cursor: not-allowed;
+    color: var(--seat-occupied-text);
+    position: relative;
   }
+
+  .seat.occupied::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background-image:
+      linear-gradient(45deg, transparent 45%, var(--seat-occupied-border) 45%, var(--seat-occupied-border) 55%, transparent 55%);
+    background-size: 100% 100%;
+    opacity: 0.5;
+  }
+
+  [data-theme="light"] .seat.occupied::before { opacity: 0.35; }
+
+  .seat.occupied:hover { transform: none; }
 
   .seat.gap-right { margin-right: 14px; }
 
+  /* ============ LEGEND ============ */
   .legend {
     display: flex;
     gap: 20px;
     list-style: none;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    transition: background 0.4s ease, border-color 0.4s ease;
   }
 
   .legend-item {
@@ -472,20 +670,38 @@
     gap: 8px;
     font-size: 0.78rem;
     color: var(--muted);
+    font-weight: 500;
   }
 
   .legend-box {
-    width: 16px;
-    height: 15px;
+    width: 18px;
+    height: 16px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    transition: all 0.3s ease;
   }
 
-  /* ---------- TRAILER MODAL ---------- */
+  .legend-available {
+    background: var(--seat-available-bg);
+    border: 1.5px solid var(--seat-available-border);
+  }
+
+  .legend-selected {
+    background: var(--selected);
+    box-shadow: 0 0 8px var(--selected-glow);
+  }
+
+  .legend-occupied {
+    background: var(--seat-occupied-bg);
+    border: 1.5px dashed var(--seat-occupied-border);
+    opacity: 0.7;
+  }
+
+  /* ============ MODAL ============ */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(5, 8, 18, 0.9);
+    background: var(--overlay-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
@@ -498,19 +714,16 @@
     transition: opacity 0.3s ease, visibility 0.3s ease;
   }
 
-  .modal-overlay.open {
-    opacity: 1;
-    visibility: visible;
-  }
+  .modal-overlay.open { opacity: 1; visibility: visible; }
 
   .modal {
     width: 100%;
     max-width: 900px;
-    background: var(--surface);
+    background: var(--modal-bg);
     border-radius: 20px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.95);
+    border: 1px solid var(--border);
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.85);
     transform: scale(0.94) translateY(14px);
     opacity: 0;
     transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), opacity 0.35s ease;
@@ -526,7 +739,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--border);
     gap: 12px;
   }
 
@@ -550,23 +763,25 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: var(--text-strong);
   }
 
   .modal-close {
     width: 36px; height: 36px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--surface-3);
+    border: 1px solid var(--border);
     color: var(--text);
     display: grid; place-items: center;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.25s ease;
     flex-shrink: 0;
     font-size: 0.9rem;
   }
 
   .modal-close:hover {
     background: var(--accent);
+    color: white;
     border-color: var(--accent);
     transform: rotate(90deg);
   }
@@ -594,7 +809,8 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    background: rgba(0,0,0,0.2);
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
   }
 
   .modal-meta {
@@ -606,8 +822,8 @@
   }
 
   .modal-meta .price-tag {
-    color: #ffb3c1;
-    background: rgba(255,77,109,0.15);
+    color: var(--accent-text);
+    background: var(--accent-soft);
     padding: 3px 10px;
     border-radius: 999px;
     font-weight: 600;
@@ -625,35 +841,41 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: var(--transition);
+    transition: all 0.25s ease;
     font-family: inherit;
   }
 
-  .modal-select-btn:hover { transform: translateY(-1px); }
+  .modal-select-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -8px var(--accent-2); }
 
-  /* Toast */
+  /* ============ TOAST ============ */
   .toast {
     position: fixed;
     left: 50%;
     bottom: -100px;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--selected), #16a34a);
-    color: #06210f;
     padding: 12px 26px;
     border-radius: 999px;
     font-weight: 700;
     font-size: 0.9rem;
-    box-shadow: 0 14px 30px -10px rgba(34,197,94,0.7);
-    transition: bottom 0.35s cubic-bezier(0.2, 0, 0, 1);
+    transition: bottom 0.35s cubic-bezier(0.2, 0, 0, 1), background 0.3s ease;
     z-index: 300;
     display: flex;
     align-items: center;
     gap: 8px;
     max-width: calc(100vw - 40px);
+    background: var(--toast-success-bg);
+    color: var(--toast-success-text);
+    box-shadow: 0 14px 30px -10px rgba(0,0,0,0.4);
   }
 
   .toast.show { bottom: 30px; }
 
+  .toast.info {
+    background: var(--toast-info-bg);
+    color: var(--toast-info-text);
+  }
+
+  /* ============ RESPONSIVE ============ */
   @media (max-width: 480px) {
     .seat { width: 22px; height: 21px; border-radius: 6px; }
     .seat-row { gap: 5px; }
@@ -666,6 +888,8 @@
     .modal { border-radius: 14px; }
     .modal-header { padding: 12px 14px; }
     .modal-footer { padding: 12px 14px; }
+    .legend { gap: 12px; padding: 10px 12px; }
+    .legend-item { font-size: 0.7rem; }
   }
 </style>
 </head>
@@ -674,9 +898,15 @@
 <div class="app">
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="brand">
-      <i class="fas fa-film"></i>
-      <div>MB<span>-App</span></div>
+    <div class="top-bar">
+      <div class="brand">
+        <i class="fas fa-film"></i>
+        <div>MB<span>-App</span></div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+        <i class="fas fa-sun icon-sun"></i>
+        <i class="fas fa-moon icon-moon"></i>
+      </button>
     </div>
 
     <!-- Featured poster -->
@@ -699,7 +929,7 @@
 
     <div class="field">
       <label for="time">Showtime</label>
-      <select id="time" style="appearance:none;background:var(--surface-2);color:var(--text);border:1px solid rgba(255,255,255,0.08);padding:12px 14px;border-radius:10px;font-size:0.9rem;cursor:pointer;outline:none;">
+      <select id="time" class="select-input">
         <option value="14:00">02:00 PM</option>
         <option value="17:30" selected>05:30 PM</option>
         <option value="20:00">08:00 PM</option>
@@ -707,7 +937,6 @@
       </select>
     </div>
 
-    <!-- Trailer button -->
     <button class="btn-trailer" id="trailerBtn">
       <i class="fas fa-play-circle"></i> Watch Trailer
     </button>
@@ -746,9 +975,15 @@
     <div class="seats" id="seats"></div>
 
     <ul class="legend">
-      <li class="legend-item"><div class="legend-box" style="background:var(--surface-2);border:1px solid rgba(255,255,255,0.15)"></div>Available</li>
-      <li class="legend-item"><div class="legend-box" style="background:var(--selected)"></div>Selected</li>
-      <li class="legend-item"><div class="legend-box" style="background:var(--occupied);opacity:.5"></div>Occupied</li>
+      <li class="legend-item">
+        <div class="legend-box legend-available"></div> Available
+      </li>
+      <li class="legend-item">
+        <div class="legend-box legend-selected"></div> Selected
+      </li>
+      <li class="legend-item">
+        <div class="legend-box legend-occupied"></div> Occupied
+      </li>
     </ul>
   </section>
 </div>
@@ -765,9 +1000,7 @@
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <div class="video-wrap" id="videoWrap">
-      <!-- iframe injected here -->
-    </div>
+    <div class="video-wrap" id="videoWrap"></div>
     <div class="modal-footer">
       <div class="modal-meta">
         <span id="modalGenre">Sci-Fi · 2h 49m</span>
@@ -780,75 +1013,74 @@
   </div>
 </div>
 
-<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastText">Booking Confirmed!</span></div>
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" id="toastIcon"></i>
+  <span id="toastText">Booking Confirmed!</span>
+</div>
 
 <script>
 (() => {
-  // ---------- MOVIE DATA (poster + backdrop + YouTube trailer) ----------
-  const MOVIES = [
-    {
-      id: 'interstellar',
-      title: 'Interstellar',
-      price: 12,
-      genre: 'Sci-Fi · 2h 49m',
-      poster: 'https://image.tmdb.org/t/p/w300/9d0oZ5bYwEeYbBnzYgLTsQwZzGb.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w780/xu9zaAevzQ5nnrsXN6JcahLnG4i.jpg',
-      trailer: 'zSWdZVtXT7E'   // YouTube video ID
-    },
-    {
-      id: 'dune',
-      title: 'Dune: Part Two',
-      price: 15,
-      genre: 'Sci-Fi · 2h 46m',
-      poster: 'https://image.tmdb.org/t/p/w300/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w780/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',
-      trailer: 'Way9Dexny3w'
-    },
-    {
-      id: 'oppenheimer',
-      title: 'Oppenheimer',
-      price: 10,
-      genre: 'Biography · 3h 0m',
-      poster: 'https://image.tmdb.org/t/p/w300/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w780/nb3xI8XI3w4pMVZ38VijbsyBqP4.jpg',
-      trailer: 'uYPbbksJxIg'
-    },
-    {
-      id: 'spiderman',
-      title: 'Spider-Man: No Way Home',
-      price: 14,
-      genre: 'Action · 2h 28m',
-      poster: 'https://image.tmdb.org/t/p/w300/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w780/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg',
-      trailer: 'JfVOs4VSpmA'
-    },
-    {
-      id: 'barbie',
-      title: 'Barbie',
-      price: 13,
-      genre: 'Comedy · 1h 54m',
-      poster: 'https://image.tmdb.org/t/p/w300/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w780/nHf61UzkfFno5X1ofIhugCPus2R.jpg',
-      trailer: 'pBk4NYhWNMM'
-    },
-    {
-      id: 'dark_knight',
-      title: 'The Dark Knight',
-      price: 11,
-      genre: 'Action · 2h 32m',
-      poster: 'https://image.tmdb.org/t/p/w300/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/w780/hkBaDkMWbLaf8B1lsWsKX7Ew3Xq.jpg',
-      trailer: 'EXeTwQWrcwY'
+  // ---------- THEME ----------
+  const htmlEl = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+  const STORAGE_KEY = 'mbapp-theme';
+
+  function applyTheme(theme) {
+    htmlEl.setAttribute('data-theme', theme);
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  function initTheme() {
+    let saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+    if (saved === 'light' || saved === 'dark') {
+      applyTheme(saved);
+    } else {
+      // Respect system preference
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      applyTheme(prefersLight ? 'light' : 'dark');
     }
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    showToast(`${next === 'dark' ? '🌙 Dark' : '☀️ Light'} mode enabled`, true);
+  });
+
+  // ---------- MOVIE DATA ----------
+  const MOVIES = [
+    { id:'interstellar', title:'Interstellar', price:12, genre:'Sci-Fi · 2h 49m',
+      poster:'https://image.tmdb.org/t/p/w300/9d0oZ5bYwEeYbBnzYgLTsQwZzGb.jpg',
+      backdrop:'https://image.tmdb.org/t/p/w780/xu9zaAevzQ5nnrsXN6JcahLnG4i.jpg',
+      trailer:'zSWdZVtXT7E' },
+    { id:'dune', title:'Dune: Part Two', price:15, genre:'Sci-Fi · 2h 46m',
+      poster:'https://image.tmdb.org/t/p/w300/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
+      backdrop:'https://image.tmdb.org/t/p/w780/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg',
+      trailer:'Way9Dexny3w' },
+    { id:'oppenheimer', title:'Oppenheimer', price:10, genre:'Biography · 3h 0m',
+      poster:'https://image.tmdb.org/t/p/w300/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+      backdrop:'https://image.tmdb.org/t/p/w780/nb3xI8XI3w4pMVZ38VijbsyBqP4.jpg',
+      trailer:'uYPbbksJxIg' },
+    { id:'spiderman', title:'Spider-Man: No Way Home', price:14, genre:'Action · 2h 28m',
+      poster:'https://image.tmdb.org/t/p/w300/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg',
+      backdrop:'https://image.tmdb.org/t/p/w780/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg',
+      trailer:'JfVOs4VSpmA' },
+    { id:'barbie', title:'Barbie', price:13, genre:'Comedy · 1h 54m',
+      poster:'https://image.tmdb.org/t/p/w300/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
+      backdrop:'https://image.tmdb.org/t/p/w780/nHf61UzkfFno5X1ofIhugCPus2R.jpg',
+      trailer:'pBk4NYhWNMM' },
+    { id:'dark_knight', title:'The Dark Knight', price:11, genre:'Action · 2h 32m',
+      poster:'https://image.tmdb.org/t/p/w300/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+      backdrop:'https://image.tmdb.org/t/p/w780/hkBaDkMWbLaf8B1lsWsKX7Ew3Xq.jpg',
+      trailer:'EXeTwQWrcwY' }
   ];
 
-  // ---------- SEAT CONFIG ----------
   const ROWS = 6;
   const COLS = 10;
   const AISLE_AFTER = [3, 7];
   const OCCUPIED = new Set(['A2','A3','B5','C6','C7','D1','E4','E5','F9']);
 
-  // ---------- STATE ----------
   let currentMovie = MOVIES[0];
   const selected = new Set();
   let lastFocusedEl = null;
@@ -869,8 +1101,8 @@
   const trailerBtn     = document.getElementById('trailerBtn');
   const toast          = document.getElementById('toast');
   const toastText      = document.getElementById('toastText');
+  const toastIcon      = document.getElementById('toastIcon');
 
-  // Modal
   const modalOverlay   = document.getElementById('trailerModal');
   const modalClose     = document.getElementById('modalClose');
   const modalTitle     = document.getElementById('modalTitle');
@@ -879,7 +1111,7 @@
   const videoWrap      = document.getElementById('videoWrap');
   const modalSelectBtn = document.getElementById('modalSelectBtn');
 
-  // ---------- RENDER MOVIE CARDS ----------
+  // ---------- MOVIE CARDS ----------
   function buildMovieCards() {
     movieScrollEl.innerHTML = '';
     MOVIES.forEach(movie => {
@@ -888,32 +1120,26 @@
       card.dataset.id = movie.id;
       card.type = 'button';
       card.setAttribute('aria-label', `Select ${movie.title}`);
-
       card.innerHTML = `
         <div class="movie-poster">
           <img src="${movie.poster}" alt="${movie.title} poster" loading="lazy"
-               onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(145deg,#2a3145,#1c2338)';" />
+               onerror="this.style.display='none';this.parentElement.style.background='var(--surface-3)';" />
         </div>
         <div class="movie-name">${movie.title.split(':')[0]}</div>
       `;
-
       card.addEventListener('click', () => selectMovie(movie.id));
       movieScrollEl.appendChild(card);
     });
   }
 
-  // ---------- SELECT MOVIE ----------
   function selectMovie(id) {
     const movie = MOVIES.find(m => m.id === id);
     if (!movie) return;
-
     currentMovie = movie;
-
     document.querySelectorAll('.movie-card').forEach(c => {
       c.classList.toggle('active', c.dataset.id === id);
     });
 
-    // Fade featured backdrop
     featuredImg.style.transition = 'opacity 0.3s ease';
     featuredImg.style.opacity = 0;
     setTimeout(() => {
@@ -930,7 +1156,7 @@
     updateUI();
   }
 
-  // ---------- BUILD SEATS ----------
+  // ---------- SEATS ----------
   function buildSeats() {
     seatsEl.innerHTML = '';
     for (let r = 0; r < ROWS; r++) {
@@ -949,18 +1175,17 @@
         seat.className = 'seat';
         seat.dataset.id = seatId;
         seat.setAttribute('role', 'button');
-        seat.setAttribute('aria-label', `Seat ${seatId}`);
+        seat.setAttribute('aria-label',
+          OCCUPIED.has(seatId) ? `Seat ${seatId}, occupied` : `Seat ${seatId}, available`);
 
         if (OCCUPIED.has(seatId)) seat.classList.add('occupied');
         if (AISLE_AFTER.includes(c)) seat.classList.add('gap-right');
-
         rowDiv.appendChild(seat);
       }
       seatsEl.appendChild(rowDiv);
     }
   }
 
-  // ---------- UPDATE UI ----------
   function updateUI() {
     const ids = [...selected].sort();
     const count = ids.length;
@@ -977,11 +1202,9 @@
     });
   }
 
-  // ---------- SEAT CLICK ----------
   seatsEl.addEventListener('click', (e) => {
     const seat = e.target.closest('.seat');
     if (!seat || seat.classList.contains('occupied')) return;
-
     const id = seat.dataset.id;
     if (selected.has(id)) selected.delete(id);
     else selected.add(id);
@@ -991,7 +1214,6 @@
   // ---------- BOOK ----------
   bookBtn.addEventListener('click', () => {
     if (selected.size === 0) return;
-
     const bookedIds = [...selected].sort();
     const totalPaid = (bookedIds.length * currentMovie.price).toFixed(2);
 
@@ -1001,16 +1223,16 @@
       if (seatEl) {
         seatEl.classList.remove('selected');
         seatEl.classList.add('occupied');
+        seatEl.setAttribute('aria-label', `Seat ${id}, occupied`);
       }
     });
 
     selected.clear();
     updateUI();
-
-    showToast(`${bookedIds.length} seat(s) booked · $${totalPaid} 🍿`);
+    showToast(`${bookedIds.length} seat(s) booked · $${totalPaid} 🍿`, true);
   });
 
-  // ---------- TRAILER MODAL ----------
+  // ---------- MODAL ----------
   function openTrailer() {
     const movie = currentMovie;
     lastFocusedEl = document.activeElement;
@@ -1019,7 +1241,6 @@
     modalGenre.textContent = movie.genre;
     modalPrice.textContent = `$${movie.price}`;
 
-    // Inject YouTube iframe (with autoplay + modest branding)
     videoWrap.innerHTML = `
       <iframe
         src="https://www.youtube.com/embed/${movie.trailer}?autoplay=1&rel=0&modestbranding=1"
@@ -1039,7 +1260,6 @@
     modalOverlay.classList.remove('open');
     modalOverlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    // Delay iframe removal so fade-out is smooth & audio stops
     setTimeout(() => { videoWrap.innerHTML = ''; }, 320);
     if (lastFocusedEl) lastFocusedEl.focus();
   }
@@ -1047,12 +1267,8 @@
   trailerBtn.addEventListener('click', openTrailer);
   featuredCard.addEventListener('click', openTrailer);
   featuredCard.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openTrailer();
-    }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTrailer(); }
   });
-
   modalClose.addEventListener('click', closeTrailer);
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeTrailer();
@@ -1060,13 +1276,10 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modalOverlay.classList.contains('open')) closeTrailer();
   });
-
-  // Modal "select seats for this movie" — just closes and highlights
   modalSelectBtn.addEventListener('click', () => {
     closeTrailer();
     setTimeout(() => {
-      // Scroll to seat area on mobile
-      document.querySelector('.seat-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.querySelector('.seat-area').scrollIntoView({ behavior:'smooth', block:'center' });
       showToast(`Now selecting seats for ${currentMovie.title}`, false);
     }, 300);
   });
@@ -1075,24 +1288,29 @@
   let toastTimer;
   function showToast(msg, isSuccess = true) {
     toastText.textContent = msg;
-    toast.style.background = isSuccess
-      ? 'linear-gradient(135deg, #22c55e, #16a34a)'
-      : 'linear-gradient(135deg, #ff4d6d, #c9184a)';
-    toast.style.color = isSuccess ? '#06210f' : '#fff';
+    toast.classList.toggle('info', !isSuccess);
+    toastIcon.className = isSuccess ? 'fas fa-check-circle' : 'fas fa-info-circle';
     toast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
   }
 
   // ---------- INIT ----------
+  initTheme();
   buildMovieCards();
   buildSeats();
   featuredImg.src = currentMovie.backdrop;
   featuredImg.alt = currentMovie.title;
   updateUI();
 
-  // Preload backdrops
   MOVIES.forEach(m => { const img = new Image(); img.src = m.backdrop; });
+
+  // Listen for system theme changes (if no manual override)
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+    let saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch(err) {}
+    if (!saved) applyTheme(e.matches ? 'light' : 'dark');
+  });
 })();
 </script>
 </body>
